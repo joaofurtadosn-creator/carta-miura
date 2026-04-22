@@ -1,57 +1,51 @@
 const https = require('https');
 
-exports.handler = function(event, context, callback) {
-  const headers = {
+exports.handler = async function(event) {
+  const cors = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, x-api-key',
+    'Access-Control-Allow-Headers': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
   if (event.httpMethod === 'OPTIONS') {
-    return callback(null, { statusCode: 200, headers: headers, body: '' });
+    return { statusCode: 200, headers: cors, body: '' };
   }
 
-  var body = JSON.parse(event.body);
-  var apiKey = event.headers['x-api-key'] || event.headers['X-Api-Key'] || '';
+  const body = JSON.parse(event.body);
+  const apiKey = event.headers['x-api-key'] || event.headers['X-Api-Key'];
 
-  var payload = JSON.stringify({
+  const payload = JSON.stringify({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 1000,
     messages: body.messages
   });
 
-  var options = {
-    hostname: 'api.anthropic.com',
-    path: '/v1/messages',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'Content-Length': Buffer.byteLength(payload)
-    }
-  };
-
-  var req = https.request(options, function(res) {
-    var data = '';
-    res.on('data', function(chunk) { data += chunk; });
-    res.on('end', function() {
-      callback(null, {
+  return new Promise((resolve) => {
+    const req = https.request({
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(payload)
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => resolve({
         statusCode: res.statusCode,
-        headers: Object.assign(headers, { 'Content-Type': 'application/json' }),
+        headers: { ...cors, 'Content-Type': 'application/json' },
         body: data
-      });
+      }));
     });
-  });
-
-  req.on('error', function(e) {
-    callback(null, {
+    req.on('error', e => resolve({
       statusCode: 500,
-      headers: headers,
+      headers: cors,
       body: JSON.stringify({ error: e.message })
-    });
+    }));
+    req.write(payload);
+    req.end();
   });
-
-  req.write(payload);
-  req.end();
 };
