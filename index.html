@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carta Mensal · Miura Investimentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;font-size:13px;background:#faf7f4;height:100vh;overflow:hidden}
+@keyframes spin{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#d4cdc9;border-radius:2px}
+.app{display:flex;flex-direction:column;height:100vh}
+.tb{background:#37171b;padding:0 14px;height:46px;display:flex;align-items:center;gap:10px;border-bottom:3px solid #598d71;flex-shrink:0}
+.logo{font-size:11px;font-weight:700;color:#fff;letter-spacing:.04em;white-space:nowrap}
+.logo em{color:rgba(255,255,255,.38);font-style:normal;font-weight:400;font-size:9.5px;margin-left:3px}
+.tbdiv{width:1px;height:14px;background:rgba(255,255,255,.12)}
+.selw{position:relative}.selw::after{content:'▾';position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:8px;color:rgba(255,255,255,.38);pointer-events:none}
+.tbsel{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:#fff;font-family:inherit;font-size:10px;padding:3px 18px 3px 7px;border-radius:4px;outline:none;appearance:none;cursor:pointer}
+.tbsel option{background:#37171b}
+.sp{flex:1}
+.steps{display:flex;align-items:center;gap:1px}
+.stp{display:flex;align-items:center;gap:4px;padding:3px 9px;font-size:9.5px;font-weight:600;border:none;background:transparent;font-family:inherit;cursor:pointer;border-radius:4px;color:rgba(255,255,255,.32)}
+.stp.on{color:#fff;background:rgba(255,255,255,.1)}.stp.ok{color:#7aad8f}
+.stpn{width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;background:rgba(255,255,255,.1)}
+.stp.on .stpn,.stp.ok .stpn{background:#598d71}
+.sarr{color:rgba(255,255,255,.15);font-size:9px}
+.body{display:flex;flex:1;overflow:hidden}
+.sb{width:186px;flex-shrink:0;background:#fff;border-right:.5px solid #e8e2de;display:flex;flex-direction:column}
+.sbhd{padding:9px 11px 7px;border-bottom:.5px solid #e8e2de}
+.sbttl{font-size:8px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#888}
+.sbsub{font-size:10.5px;color:#1a1a1a;font-weight:500;margin-top:1px}
+.sblist{flex:1;overflow-y:auto;padding:3px 0}
+.ti{display:flex;align-items:flex-start;gap:7px;padding:6px 11px;cursor:pointer;border-left:3px solid transparent;transition:background .12s}
+.ti:hover{background:#f5f1ee}.ti.sel{background:rgba(55,23,27,.04)}
+.tdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.tnm{font-size:10.5px;font-weight:500;color:#1a1a1a}
+.tcat{font-size:8.5px;color:#888;margin-top:1px}
+.tck{font-size:9.5px;flex-shrink:0;margin-top:1px}
+.sbft{padding:8px 11px;border-top:.5px solid #e8e2de;display:flex;flex-direction:column;gap:4px}
+.ct{font-size:9px;color:#888;text-align:center}
+.btnM{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border-radius:5px;font-family:inherit;font-size:10.5px;font-weight:600;cursor:pointer;border:none;width:100%;background:#37171b;color:#fff}
+.btnM:hover{background:#54272d}.btnM:disabled{opacity:.45;cursor:not-allowed}
+.btnV{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border-radius:5px;font-family:inherit;font-size:10.5px;font-weight:600;cursor:pointer;border:none;width:100%;background:#598d71;color:#fff}
+.btnV:hover{background:#7aad8f}.btnV:disabled{opacity:.45;cursor:not-allowed}
+.btnO{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border-radius:5px;font-family:inherit;font-size:10.5px;font-weight:600;cursor:pointer;width:100%;background:transparent;color:#37171b;border:1px solid #37171b}
+.content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.panel{display:none;flex:1;overflow:hidden;flex-direction:column}
+.panel.vis{display:flex}
+.cfg{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.cs{background:#fff;border:.5px solid #e8e2de;border-radius:7px;overflow:hidden}
+.csh{padding:9px 13px;background:#f5f1ee;border-bottom:.5px solid #e8e2de;display:flex;align-items:center;gap:6px}
+.csttl{font-size:11px;font-weight:600;color:#1a1a1a}
+.cssub{font-size:9px;color:#888;margin-left:3px}
+.csb{padding:12px 13px}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.mb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 5px;border-radius:6px;border:1.5px solid #e8e2de;background:#fff;cursor:pointer;text-align:center;transition:all .17s}
+.mb:hover{border-color:#73343d}.mb.act{border-color:#37171b;background:rgba(55,23,27,.04)}
+.mblbl{font-size:10px;font-weight:600;color:#1a1a1a}
+.mbdesc{font-size:8.5px;color:#888;line-height:1.3}
+.pgrow{display:flex;align-items:center;gap:9px}
+.pgctrl{display:flex;align-items:center;border:.5px solid #e8e2de;border-radius:5px;overflow:hidden}
+.pgbtn{width:26px;height:26px;background:#f5f1ee;border:none;font-size:13px;cursor:pointer;font-family:inherit;color:#1a1a1a}
+.pgn{width:32px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#1a1a1a;border-left:.5px solid #e8e2de;border-right:.5px solid #e8e2de}
+.bal{height:3px;background:#e8e2de;border-radius:2px;overflow:hidden;margin-top:7px}
+.balf{height:100%;background:#598d71;border-radius:2px;transition:width .3s}
+.indg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.indk{background:#37171b;border-radius:5px;padding:7px 9px}
+.indl{background:#f5f1ee;border:.5px solid #e8e2de;border-radius:5px;padding:7px 9px}
+.iv{font-size:13px;font-weight:700}.indk .iv{color:#fff}.indl .iv{color:#37171b}
+.il{font-size:7.5px;margin-top:1px}.indk .il{color:rgba(255,255,255,.48)}.indl .il{color:#888}
+.is{font-size:7px}.indk .is{color:rgba(255,255,255,.28)}.indl .is{color:#aaa}
+.edlay{flex:1;display:flex;overflow:hidden}
+.qpan{width:206px;flex-shrink:0;background:#fff;border-right:.5px solid #e8e2de;overflow-y:auto;padding:8px 0}
+.abbx{margin:0 11px 8px;padding:9px 10px;background:rgba(55,23,27,.04);border:.5px solid #e8e2de;border-radius:6px;border-left:3px solid #598d71}
+.abttl{font-size:8.5px;font-weight:600;color:#598d71;text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px}
+.abdesc{font-size:9.5px;color:#888;margin-bottom:6px;line-height:1.4}
+.qhd{padding:0 11px 5px;font-size:8px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#888}
+.qi{padding:7px 11px;cursor:pointer;border-left:3px solid transparent;transition:background .12s}
+.qi:hover{background:#f5f1ee}.qi.qiact{background:rgba(55,23,27,.05);border-left-color:#37171b}.qi.qiok{border-left-color:#598d71}
+.qirow{display:flex;align-items:center;gap:5px}
+.qinm{font-size:10.5px;font-weight:500;flex:1;color:#1a1a1a}
+.qiprev{font-size:8.5px;color:#aaa;margin-top:2px;margin-left:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-style:italic}
+.edmain{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.edtb{padding:7px 13px;border-bottom:.5px solid #e8e2de;display:flex;align-items:center;gap:7px;background:#fff;flex-shrink:0}
+.edtn{font-size:12px;font-weight:600;color:#1a1a1a}
+.edtc{font-size:9px;color:#888;margin-top:1px}
+.edbody{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:11px}
+.edempty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#888;text-align:center;gap:7px;padding:28px}
+.sc{background:#fff;border:.5px solid #e8e2de;border-radius:6px;overflow:hidden}
+.sch{padding:7px 11px;display:flex;align-items:center;gap:5px;border-bottom:.5px solid #e8e2de}
+.sctag{font-size:7.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:rgba(55,23,27,.08);color:#37171b}
+.scwds{font-size:9px;color:#888;margin-left:auto}
+.sc textarea{width:100%;padding:9px 11px;border:none;outline:none;resize:vertical;font-family:inherit;font-size:11.5px;line-height:1.75;color:#1a1a1a;background:transparent}
+.col2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rvlay{flex:1;display:flex;overflow:hidden}
+.rvsb{width:186px;flex-shrink:0;background:#fff;border-right:.5px solid #e8e2de;padding:11px;overflow-y:auto;display:flex;flex-direction:column;gap:7px}
+.rvttl{font-size:8px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#888;margin-bottom:5px}
+.rvit{display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:4px;cursor:pointer;font-size:10.5px;font-weight:500;color:#1a1a1a}
+.rvit:hover{background:#f5f1ee}
+.rvok{font-size:9.5px;color:#598d71;margin-left:auto}
+.rvmain{flex:1;overflow-y:auto;padding:14px;background:#faf7f4}
+.prevhd{background:#37171b;color:#fff;padding:9px 14px;border-radius:6px 6px 0 0;border-bottom:3px solid #598d71;display:flex;align-items:center;justify-content:space-between}
+.prevcard{background:#fff;border:.5px solid #e8e2de;border-top:none;border-radius:0 0 6px 6px;overflow:hidden;margin-bottom:11px}
+.pt{padding:14px;border-bottom:.5px solid #e8e2de}.pt:last-child{border-bottom:none}
+.pthl{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:7px;line-height:1.2}
+.ptcols{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.spin{display:inline-block;width:11px;height:11px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:spin .7s linear infinite;flex-shrink:0}
+.spin.dk{border-color:rgba(55,23,27,.14);border-top-color:#37171b}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);color:#fff;font-family:inherit;font-size:10.5px;font-weight:600;padding:7px 18px;border-radius:100px;z-index:9999;white-space:nowrap;transition:transform .28s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.ibtn{display:flex;align-items:center;gap:3px;padding:4px 9px;border-radius:5px;border:.5px solid #d4cdc9;background:#fff;font-family:inherit;font-size:9.5px;font-weight:600;cursor:pointer;color:#1a1a1a}
+.ibtn:disabled{opacity:.45;cursor:not-allowed}
+.gbtn{display:flex;align-items:center;gap:4px;padding:4px 11px;border-radius:5px;background:#37171b;color:#fff;border:none;font-family:inherit;font-size:10.5px;font-weight:600;cursor:pointer}
+.gbtn:disabled{opacity:.45;cursor:not-allowed;background:#d4cdc9}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center}
+.modal{background:#fff;border-radius:12px;padding:28px;width:420px;max-width:calc(100vw - 32px);box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-logo{font-size:11px;font-weight:700;color:#37171b;letter-spacing:.04em;margin-bottom:16px}
+.modal-logo em{color:#888;font-style:normal;font-weight:400}
+.minp-w{position:relative;margin-bottom:10px}
+.minp{width:100%;padding:10px 40px 10px 12px;border:1.5px solid #e8e2de;border-radius:7px;font-family:inherit;font-size:12px;color:#1a1a1a;outline:none;transition:border-color .15s}
+.minp:focus{border-color:#37171b}
+.meye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#888;font-size:14px;padding:2px}
+.mhint{font-size:10px;color:#aaa;margin-bottom:20px;line-height:1.5}
+.mhint a{color:#598d71;text-decoration:none}
+.msave{width:100%;padding:10px;background:#37171b;color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.msave:hover{background:#54272d}
+.apibadge{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:8.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;background:rgba(89,141,113,.18);color:#598d71}
+</style>
+</head>
+<body>
+<div class="modal-ov" id="MODAL">
+  <div class="modal">
+    <div class="modal-logo">MIURA <em>INVESTIMENTOS · btg pactual</em></div>
+    <h2 style="font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:6px">Chave de API Anthropic</h2>
+    <p style="font-size:11.5px;color:#666;line-height:1.6;margin-bottom:18px">Insira sua chave de API. Ela fica salva apenas no seu navegador e é usada para gerar o conteúdo da carta.</p>
+    <div class="minp-w">
+      <input type="password" class="minp" id="AINP" placeholder="sk-ant-api03-..." autocomplete="off">
+      <button class="meye" onclick="document.getElementById('AINP').type=document.getElementById('AINP').type==='password'?'text':'password'">👁</button>
+    </div>
+    <div class="mhint">Não tem chave? <a href="https://console.anthropic.com" target="_blank">Crie em console.anthropic.com</a> — ~R$0,15 por carta gerada.</div>
+    <button class="msave" onclick="saveKey()">Salvar e entrar →</button>
+  </div>
+</div>
+
+<div class="app">
+<div class="tb">
+  <div class="logo">MIURA<em>INVESTIMENTOS · btg pactual</em></div>
+  <div class="tbdiv"></div>
+  <div class="selw">
+    <select class="tbsel" id="MES">
+      <option>Janeiro 2026</option><option>Fevereiro 2026</option><option>Março 2026</option>
+      <option selected>Abril 2026</option><option>Maio 2026</option><option>Junho 2026</option>
+      <option>Julho 2026</option><option>Agosto 2026</option><option>Setembro 2026</option>
+      <option>Outubro 2026</option><option>Novembro 2026</option><option>Dezembro 2026</option>
+    </select>
+  </div>
+  <div class="sp"></div>
+  <div class="steps">
+    <button class="stp on" id="S1" onclick="goStep(1)"><span class="stpn">1</span>Configurar</button>
+    <span class="sarr">›</span>
+    <button class="stp" id="S2" onclick="goStep(2)"><span class="stpn">2</span>Escrever</button>
+    <span class="sarr">›</span>
+    <button class="stp" id="S3" onclick="goStep(3)"><span class="stpn">3</span>Revisar</button>
+  </div>
+  <div class="tbdiv"></div>
+  <button class="apibadge" id="ABADGE" onclick="resetKey()">🔑 API conectada</button>
+</div>
+<div class="body">
+  <div class="sb">
+    <div class="sbhd"><div class="sbttl">Temas</div><div class="sbsub">Selecione para incluir</div></div>
+    <div class="sblist" id="SB"></div>
+    <div class="sbft">
+      <div class="ct" id="SC">3 temas selecionados</div>
+      <button class="btnM" onclick="goStep(2)">Avançar →</button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="panel vis" id="P1">
+      <div class="cfg">
+        <div class="cs">
+          <div class="csh"><span>✦</span><span class="csttl">Metáfora da abertura</span><span class="cssub">— fio narrativo único</span></div>
+          <div class="csb"><div class="mg" id="MG"></div></div>
+        </div>
+        <div class="cs">
+          <div class="csh"><span>📄</span><span class="csttl">Extensão</span></div>
+          <div class="csb">
+            <div class="pgrow">
+              <div class="pgctrl">
+                <button class="pgbtn" onclick="chPg(-1)">−</button>
+                <div class="pgn" id="PGN">2</div>
+                <button class="pgbtn" onclick="chPg(1)">+</button>
+              </div>
+              <span style="font-size:10.5px;color:#888" id="PGI">~450 palavras por tema</span>
+              <span style="font-size:9.5px;font-weight:600;color:#598d71;margin-left:auto" id="BLAB">Equilibrado</span>
+            </div>
+            <div class="bal"><div class="balf" id="BF" style="width:55%"></div></div>
+          </div>
+        </div>
+        <div class="cs">
+          <div class="csh"><span>📊</span><span class="csttl">Indicadores — Abr/26</span></div>
+          <div class="csb">
+            <div class="indg">
+              <div class="indk"><div class="iv">0,88%</div><div class="il">IPCA Mar/26</div><div class="is">Acum. 12M: 4,14%</div></div>
+              <div class="indk"><div class="iv">14,75%</div><div class="il">Selic</div><div class="is">Corte -0,25pp</div></div>
+              <div class="indk"><div class="iv">~198k</div><div class="il">Ibovespa</div><div class="is">+22% no ano</div></div>
+              <div class="indl"><div class="iv">R$4,99</div><div class="il">Dolar</div><div class="is">Min. abr/24</div></div>
+              <div class="indl"><div class="iv">US$102</div><div class="il">Brent</div><div class="is">Time spread: 35,4</div></div>
+              <div class="indl"><div class="iv" style="color:#37171b">12,25%</div><div class="il">Focus Selic/26</div><div class="is">Projecao dez/26</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end">
+          <button class="btnM" style="width:auto;padding:7px 20px" onclick="goStep(2)">Avançar →</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel" id="P2">
+      <div class="edlay">
+        <div class="qpan">
+          <div class="abbx">
+            <div class="abttl">✦ Abertura</div>
+            <div class="abdesc" id="ABDESC">Metafora — todos os temas</div>
+            <button class="btnV" id="ABBTN" onclick="genAbertura()" style="padding:5px 0;font-size:9.5px">✦ Gerar abertura</button>
+            <div id="ABOK" style="display:none;font-size:8.5px;color:#598d71;margin-top:4px">✓ Abertura pronta</div>
+          </div>
+          <div class="qhd">Temas selecionados</div>
+          <button class="btnM" id="GAB" onclick="genAll()" style="margin:0 11px 7px;width:calc(100% - 22px);padding:6px;font-size:10.5px">✦ Gerar todos os temas</button>
+          <div id="QL"></div>
+        </div>
+        <div class="edmain">
+          <div class="edtb">
+            <div style="flex:1"><div class="edtn" id="ETN">Selecione um tema</div><div class="edtc" id="ETC">clique na lista ao lado</div></div>
+            <button class="ibtn" id="REB" onclick="regenOne()" disabled>↺ Regenerar</button>
+            <button class="gbtn" id="GSB" onclick="genOne()" disabled>✦ Gerar tema</button>
+          </div>
+          <div class="edbody" id="EB">
+            <div class="edempty"><div style="font-size:26px;opacity:.18">✦</div><span style="font-size:11px;line-height:1.6;max-width:235px">Selecione um tema e clique em <strong>Gerar tema</strong></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel" id="P3">
+      <div class="rvlay">
+        <div class="rvsb">
+          <div>
+            <div class="rvttl">Conteudo</div>
+            <div style="display:flex;align-items:center;gap:5px;padding:4px 7px;font-size:10.5px;color:#1a1a1a;margin-bottom:3px">
+              <div style="width:5px;height:5px;border-radius:50%;background:#598d71;flex-shrink:0"></div>Abertura<span id="ABCK" style="font-size:9.5px;color:#598d71;margin-left:auto"></span>
+            </div>
+            <div id="RVL"></div>
+          </div>
+          <div style="margin-top:auto;padding-top:10px;border-top:.5px solid #e8e2de;display:flex;flex-direction:column;gap:4px">
+            <button class="btnV" onclick="baixar()">⬇ Baixar carta (.html)</button>
+            <div style="font-size:8.5px;color:#888;text-align:center;line-height:1.5">Abra no Chrome e Ctrl+P para PDF</div>
+            <button class="btnO" onclick="goStep(2)" style="margin-top:2px">← Editar</button>
+          </div>
+        </div>
+        <div class="rvmain">
+          <div class="prevhd">
+            <span style="font-size:10.5px;font-weight:700;letter-spacing:.04em">MIURA INVESTIMENTOS · btg pactual</span>
+            <span style="font-size:8.5px;color:rgba(255,255,255,.42)" id="PVM">Relatorio Macro · Abril 2026</span>
+          </div>
+          <div class="prevcard" id="PVC"><div style="padding:28px;text-align:center;color:#888;font-size:11px">Gere os temas no passo anterior.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="TOAST"></div>
+</div>
+
+<script>
+var TEMAS=[{id:"ipca",name:"Inflação (IPCA)",color:"#37171b",cat:"Macro BR"},{id:"selic",name:"Juros (Selic)",color:"#54272d",cat:"Política Monetária"},{id:"petroleo",name:"Petróleo / Geopolítica",color:"#7a3520",cat:"Internacional"},{id:"eleicoes",name:"Eleições 2026",color:"#3a2660",cat:"Político"},{id:"ibovespa",name:"Bolsa (Ibovespa)",color:"#1a5c35",cat:"Renda Variável"},{id:"cambio",name:"Câmbio (Dólar)",color:"#1a3f60",cat:"Macro BR"},{id:"pib",name:"PIB / Atividade",color:"#4a3510",cat:"Macro BR"},{id:"trabalho",name:"Mercado de Trabalho",color:"#7a2518",cat:"Macro BR"},{id:"credito",name:"Crédito & Renda Fixa",color:"#2a4a4a",cat:"Mercados"}];
+var METAS=[{id:"esportiva",label:"Esportiva",desc:"Automobilismo, tênis, boxe"},{id:"militar",label:"Militar",desc:"A Arte da Guerra, estratégia"},{id:"musical",label:"Musical",desc:"Orquestra, jazz, partitura"},{id:"culinaria",label:"Culinária",desc:"Receita, ingredientes, forno"},{id:"cinema",label:"Cinema",desc:"Roteiro, cena, plot twist"},{id:"natureza",label:"Natureza",desc:"Oceano, tempestade, estações"}];
+var CTX={ipca:"IPCA mar/26: +0,88%. Acum 12M: 4,14%. Meta 3% +/-1,5pp. Transportes +1,64%. Alimentacao +1,56%. Focus IPCA 2026: 4,71%.",selic:"Selic: 14,75%aa. Copom mar/26 cortou 0,25pp unanime, 1a queda desde mai/24. Focus dez/26: 12,25%.",petroleo:"Brent US$102/barril. Time spread 35,4pts recorde. EUA+Israel atacaram Ira fev/26. Ormuz fechado, reaberto 7/abr.",eleicoes:"Eleicoes out/2026. Congresso rompeu com PT. Ibovespa em recordes. Flavio Bolsonaro candidato.",ibovespa:"Ibovespa 187k pts mar/26. Abr/26: 197-198k. +22% no ano. Fluxo estrangeiro: R$49,6bi.",cambio:"Dolar R$4,99 min abr/24. Real +9% no ano. DXY abaixo de 100.",pib:"PIB 2025: +2,2%. 2026 desacelerando. Credito PJ +5,8% 12M. Inadimplencia 4,3%.",trabalho:"Desemprego 6,5% subindo. Comprometimento renda: 29,3%. Inadimplencia: 4,3%.",credito:"CDI mar/26: +1,2%. Spreads abertura acima 10bps. Raizen e GPA recuperacao extrajudicial."};
+var SEL={"ipca":1,"selic":1,"petroleo":1};
+var META="esportiva",PGS=2,STEP=1,ACTIVE=null,GEN={},MG="",BUSY=false,BUSYM=false,GQ=[],GI=0,AK="";
+
+function selArr(){var r=[];for(var i=0;i<TEMAS.length;i++){if(SEL[TEMAS[i].id])r.push(TEMAS[i]);}return r;}
+function getMeta(){for(var i=0;i<METAS.length;i++){if(METAS[i].id===META)return METAS[i];}return METAS[0];}
+function selSize(){var n=0;for(var k in SEL){if(SEL[k])n++;}return n;}
+function getTema(id){for(var i=0;i<TEMAS.length;i++){if(TEMAS[i].id===id)return TEMAS[i];}return null;}
+
+function saveKey(){
+  var v=document.getElementById("AINP").value.trim();
+  if(!v||!v.startsWith("sk-")){showToast("Chave invalida — deve comecar com sk-");return;}
+  AK=v;try{localStorage.setItem("miura_ak",v);}catch(e){}
+  document.getElementById("MODAL").style.display="none";
+}
+function resetKey(){
+  if(!confirm("Redefinir chave de API?"))return;
+  AK="";try{localStorage.removeItem("miura_ak");}catch(e){}
+  document.getElementById("AINP").value="";
+  document.getElementById("MODAL").style.display="flex";
+}
+function initModal(){
+  var s="";try{s=localStorage.getItem("miura_ak")||"";}catch(e){}
+  if(s&&s.startsWith("sk-")){AK=s;document.getElementById("MODAL").style.display="none";}
+  else{document.getElementById("MODAL").style.display="flex";}
+}
+
+function init(){initModal();renderSB();renderMG();updPg();}
+
+function renderSB(){
+  var el=document.getElementById("SB");el.innerHTML="";var n=0;
+  for(var i=0;i<TEMAS.length;i++){
+    var t=TEMAS[i];var s=SEL[t.id]?1:0;var g=GEN[t.id];var done=g&&!g.loading;if(s)n++;
+    var d=document.createElement("div");d.className="ti"+(s?" sel":"");d.style.borderLeftColor=s?t.color:"transparent";d.setAttribute("data-id",t.id);
+    d.innerHTML='<div class="tdot" style="background:'+t.color+'"></div><div style="flex:1;min-width:0"><div class="tnm">'+t.name+'</div><div class="tcat">'+t.cat+'</div></div><div class="tck" style="color:'+(done?"#598d71":"#37171b")+'">'+(s?"✓":"")+"</div>";
+    d.onclick=function(){togSel(this.getAttribute("data-id"));};el.appendChild(d);
+  }
+  document.getElementById("SC").textContent=n+" tema"+(n!==1?"s":"")+" selecionado"+(n!==1?"s":"");
+}
+function togSel(id){if(SEL[id]){if(selSize()===1)return;SEL[id]=0;}else{SEL[id]=1;}renderSB();updPg();renderQL();}
+function renderMG(){
+  var el=document.getElementById("MG");el.innerHTML="";
+  for(var i=0;i<METAS.length;i++){
+    var m=METAS[i];var d=document.createElement("div");d.className="mb"+(m.id===META?" act":"");d.setAttribute("data-id",m.id);
+    d.innerHTML='<div class="mblbl">'+m.label+'</div><div class="mbdesc">'+m.desc+"</div>";
+    d.onclick=function(){META=this.getAttribute("data-id");renderMG();document.getElementById("ABDESC").textContent="Metafora "+getMeta().label+" — todos os temas";};
+    el.appendChild(d);
+  }
+}
+function chPg(d){PGS=Math.max(1,Math.min(6,PGS+d));updPg();}
+function updPg(){
+  var n=selSize()||1,pt=Math.round((PGS*450)/n);var pct=Math.min(100,Math.max(5,(pt/700)*100));
+  var lbl=pt<200?"Resumido":pt<420?"Equilibrado":pt<620?"Detalhado":"Extenso";
+  document.getElementById("PGN").textContent=PGS;document.getElementById("PGI").textContent="~"+pt+" palavras por tema";
+  document.getElementById("BF").style.width=pct+"%";document.getElementById("BLAB").textContent=lbl;
+}
+function goStep(n){
+  if(n===2&&selSize()===0){showToast("Selecione ao menos um tema");return;}
+  if(n===3){var arr=selArr(),ok=false;for(var i=0;i<arr.length;i++){var g=GEN[arr[i].id];if(g&&!g.loading){ok=true;break;}}if(!ok){showToast("Gere ao menos um tema antes");return;}renderReview();}
+  STEP=n;
+  var ps=["P1","P2","P3"];for(var i=0;i<ps.length;i++){document.getElementById(ps[i]).className="panel"+(i+1===n?" vis":"");}
+  var ss=["S1","S2","S3"];for(var i=0;i<ss.length;i++){document.getElementById(ss[i]).className="stp"+(i+1===n?" on":i+1<n?" ok":"");}
+  if(n===2){renderQL();document.getElementById("ABDESC").textContent="Metafora "+getMeta().label+" — todos os temas";}
+  document.getElementById("PVM").textContent="Relatorio Macro · "+document.getElementById("MES").value;
+}
+function renderQL(){
+  var el=document.getElementById("QL");el.innerHTML="";var arr=selArr();
+  for(var i=0;i<arr.length;i++){
+    var t=arr[i],g=GEN[t.id],isA=t.id===ACTIVE;
+    var d=document.createElement("div");d.className="qi"+(isA?" qiact":"")+(g&&!g.loading?" qiok":"");d.setAttribute("data-id",t.id);
+    var ic=g?(g.loading?"...":"✓"):"○",iclr=g&&!g.loading?"#598d71":"#ccc";
+    d.innerHTML='<div class="qirow"><div style="width:5px;height:5px;border-radius:50%;background:'+t.color+';flex-shrink:0"></div><span class="qinm">'+t.name+'</span><span style="font-size:13px;color:'+iclr+'">'+ic+"</span></div>"+'<div class="qiprev">'+(g&&g.headline?g.headline:"aguardando geracao")+"</div>";
+    d.onclick=function(){setActive(this.getAttribute("data-id"));};el.appendChild(d);
+  }
+}
+function setActive(id){
+  ACTIVE=id;var t=getTema(id);
+  document.getElementById("ETN").textContent=t?t.name:"—";document.getElementById("ETC").textContent=t?t.cat:"";
+  document.getElementById("GSB").disabled=false;var g=GEN[id];document.getElementById("REB").disabled=!g||g.loading;
+  renderQL();renderEditor(id);
+}
+
+function callAPI(prompt,cb){
+  if(!AK){showToast("Insira a chave de API primeiro");document.getElementById("MODAL").style.display="flex";return;}
+  var xhr=new XMLHttpRequest();
+  xhr.open("POST","/.netlify/functions/proxy",true);
+  xhr.setRequestHeader("Content-Type","application/json");
+  xhr.setRequestHeader("x-api-key",AK);
+  xhr.onreadystatechange=function(){
+    if(xhr.readyState!==4)return;
+    if(xhr.status!==200){cb("Erro HTTP "+xhr.status,null);return;}
+    try{var data=JSON.parse(xhr.responseText);var txt="";if(data&&data.content&&data.content[0]&&data.content[0].text)txt=data.content[0].text;cb(null,txt);}
+    catch(e){cb("Erro ao processar resposta",null);}
+  };
+  xhr.onerror=function(){cb("Erro de rede",null);};
+  xhr.send(JSON.stringify({messages:[{role:"user",content:prompt}]}));
+}
+
+function buildPrompt(t){
+  var m=getMeta(),mes=document.getElementById("MES").value,n=selSize()||1,hw=Math.round((PGS*450)/n/2);
+  return "Gere conteudo para o tema \""+t.name+"\" da carta mensal da Miura Investimentos ("+mes+").\nEstilo: mix Relatorios Macro Miura, Carta Kapitalo, Carta Sparta, Carta Netz. Metafora "+m.label+" pode aparecer sutilmente.\nDados reais: "+(CTX[t.id]||"")+"\nExtensao: ~"+hw+" palavras por coluna.\nRetorne APENAS este JSON sem markdown:\n{\"headline\":\"titulo jornalistico forte\",\"passado\":\"O que aconteceu em ~"+hw+" palavras com dados reais.\",\"perspectiva\":\"O que esperar em ~"+hw+" palavras, tom de conselheiro.\"}";
+}
+function applyResult(tid,raw){
+  var t=getTema(tid),c=raw.replace(/```json|```/g,"").trim(),p={};
+  try{var s=c.indexOf("{"),e=c.lastIndexOf("}");if(s>=0&&e>s)p=JSON.parse(c.slice(s,e+1));}catch(x){p={};}
+  GEN[tid]={headline:p.headline||(t?t.name:tid),passado:p.passado||"",perspectiva:p.perspectiva||"",loading:false};
+}
+function genOne(){
+  if(!ACTIVE||BUSY)return;var tid=ACTIVE,t=getTema(tid);if(!t)return;
+  BUSY=true;GEN[tid]={loading:true};renderQL();renderEditor(tid);
+  document.getElementById("GSB").disabled=true;document.getElementById("GSB").innerHTML='<span class="spin" style="width:10px;height:10px"></span>';
+  callAPI(buildPrompt(t),function(err,raw){
+    BUSY=false;document.getElementById("GSB").disabled=false;document.getElementById("GSB").innerHTML="✦ Gerar tema";
+    if(err){GEN[tid]={headline:t.name,passado:"Erro. Regenere.",perspectiva:"",loading:false};showToast("Erro: "+err);}
+    else{applyResult(tid,raw);showToast("Tema gerado!",true);}
+    renderQL();if(ACTIVE===tid){renderEditor(tid);document.getElementById("REB").disabled=false;}renderSB();
+  });
+}
+function regenOne(){if(!ACTIVE)return;delete GEN[ACTIVE];genOne();}
+function genAllNext(){
+  if(GI>=GQ.length){BUSY=false;document.getElementById("GAB").disabled=false;document.getElementById("GAB").innerHTML="✦ Gerar todos os temas";showToast("Todos os temas gerados!",true);return;}
+  var t=GQ[GI];GI++;GEN[t.id]={loading:true};renderQL();if(ACTIVE===t.id)renderEditor(t.id);
+  callAPI(buildPrompt(t),function(err,raw){
+    if(err){GEN[t.id]={headline:t.name,passado:"Erro.",perspectiva:"",loading:false};}else{applyResult(t.id,raw);}
+    renderQL();if(ACTIVE===t.id)renderEditor(t.id);renderSB();genAllNext();
+  });
+}
+function genAll(){
+  if(BUSY)return;var arr=selArr();if(!arr.length){showToast("Selecione temas");return;}
+  BUSY=true;GQ=arr;GI=0;document.getElementById("GAB").disabled=true;
+  document.getElementById("GAB").innerHTML='<span class="spin" style="width:10px;height:10px"></span> Gerando...';genAllNext();
+}
+function genAbertura(){
+  if(BUSYM)return;BUSYM=true;var btn=document.getElementById("ABBTN");btn.disabled=true;btn.innerHTML='<span class="spin" style="width:10px;height:10px"></span> Gerando...';
+  var m=getMeta(),mes=document.getElementById("MES").value,arr=selArr(),tList="";
+  for(var i=0;i<arr.length;i++)tList+=(i?", ":"")+arr[i].name;
+  callAPI("Escreva a abertura da carta mensal da Miura Investimentos para "+mes+".\nTemas: "+tList+". Metafora: "+m.label+" ("+m.desc+").\nEstilo: mix Relatorios Macro Miura, Carta Netz, Carta Kapitalo.\nIndicadores: IPCA mar/26 +0,88%, Selic 14,75%aa, Ibovespa +22% (198k), Dolar R$4,99, Brent US$102.\n3-4 paragrafos corridos ~280 palavras. Retorne APENAS o texto.",
+  function(err,txt){BUSYM=false;btn.disabled=false;if(err){showToast("Erro: "+err);btn.innerHTML="✦ Gerar abertura";return;}MG=txt.trim();document.getElementById("ABOK").style.display="block";btn.innerHTML="↺ Regenerar";showToast("Abertura gerada!",true);});
+}
+function renderEditor(id){
+  var body=document.getElementById("EB"),g=GEN[id];
+  if(!g){body.innerHTML='<div class="edempty"><div style="font-size:26px;opacity:.18">✦</div><span style="font-size:11px;line-height:1.6;max-width:235px">Clique em <strong>Gerar tema</strong></span></div>';return;}
+  if(g.loading){body.innerHTML='<div class="edempty"><span class="spin dk" style="width:16px;height:16px"></span><span style="font-size:12px;color:#37171b;font-weight:500;margin-top:7px">Gerando...</span></div>';return;}
+  body.innerHTML="";body.appendChild(mkCard("Título / Headline","headline",id,2,46));
+  var c2=document.createElement("div");c2.className="col2";c2.appendChild(mkCard("O que aconteceu","passado",id,8,150));c2.appendChild(mkCard("O que esperar","perspectiva",id,8,150));body.appendChild(c2);
+}
+function mkCard(label,field,tid,rows,minH){
+  var g=GEN[tid],val=g?g[field]||"":"";var wds=val.trim().split(/\s+/).filter(function(w){return w.length>0;}).length;
+  var c=document.createElement("div");c.className="sc";var wid="W-"+tid+"-"+field,taid="TA-"+tid+"-"+field;
+  c.innerHTML='<div class="sch"><span class="sctag">'+label+'</span><span class="scwds" id="'+wid+'">'+wds+' palavras</span></div><textarea rows="'+rows+'" style="min-height:'+minH+'px" id="'+taid+'">'+val+"</textarea>";
+  setTimeout(function(){var ta=document.getElementById(taid);if(ta){ta.setAttribute("data-tid",tid);ta.setAttribute("data-field",field);ta.setAttribute("data-wid",wid);ta.oninput=function(){var ti=this.getAttribute("data-tid"),fi=this.getAttribute("data-field"),wi=this.getAttribute("data-wid");if(GEN[ti])GEN[ti][fi]=this.value;var w=this.value.trim().split(/\s+/).filter(function(x){return x.length>0;}).length;var el=document.getElementById(wi);if(el)el.textContent=w+" palavras";};}},50);
+  return c;
+}
+function renderReview(){
+  document.getElementById("ABCK").textContent=MG?"✓":"";var rvl=document.getElementById("RVL");rvl.innerHTML="";var arr=selArr();
+  for(var i=0;i<arr.length;i++){var t=arr[i],g=GEN[t.id],d=document.createElement("div");d.className="rvit";d.setAttribute("data-id",t.id);d.innerHTML='<div style="width:5px;height:5px;border-radius:50%;background:'+t.color+';flex-shrink:0"></div>'+t.name+'<span class="rvok">'+(g&&!g.loading?"✓":"")+"</span>";d.onclick=function(){var el=document.getElementById(this.getAttribute("data-id")+"-rv");if(el)el.scrollIntoView({behavior:"smooth"});};rvl.appendChild(d);}
+  var pvc=document.getElementById("PVC");pvc.innerHTML="";
+  if(MG){var ab=document.createElement("div");ab.style.cssText="padding:13px 15px;border-bottom:.5px solid #e8e2de";ab.innerHTML='<div style="font-size:7.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#54272d;margin-bottom:5px">✦ Abertura</div><div style="font-size:10.5px;font-style:italic;color:#54272d;line-height:1.7;border-left:3px solid #598d71;padding-left:9px">'+(MG.length>360?MG.slice(0,360)+"...":MG)+"</div>";pvc.appendChild(ab);}
+  for(var i=0;i<arr.length;i++){var t=arr[i],g=GEN[t.id];if(!g||g.loading)continue;var d=document.createElement("div");d.className="pt";d.id=t.id+"-rv";
+    d.innerHTML='<div style="display:flex;align-items:center;gap:5px;margin-bottom:5px"><div style="width:18px;height:18px;border-radius:50%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff">'+(i+1)+'</div><span style="font-size:7.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:'+t.color+'18;color:'+t.color+'">'+t.cat+"</span></div>"+'<div class="pthl">'+(g.headline||t.name)+"</div>"+'<div class="ptcols"><div style="padding:9px 11px;border-radius:5px;background:#f5f1ee;border:.5px solid #e8e2de"><div style="font-size:7.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:'+t.color+';margin-bottom:5px">— O que aconteceu</div><div style="font-size:10px;line-height:1.65;color:#1a1a1a">'+(g.passado||"")+"</div></div>"+'<div style="padding:9px 11px;border-radius:5px;background:'+t.color+'"><div style="font-size:7.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:5px">— O que esperar</div><div style="font-size:10px;line-height:1.65;color:rgba(255,255,255,.88)">'+(g.perspectiva||"")+"</div></div></div>"+'<div style="display:flex;align-items:center;gap:7px;margin-top:9px;padding-top:9px;border-top:.5px solid #e8e2de"><div style="width:22px;height:22px;border-radius:50%;background:#37171b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:700;flex-shrink:0">JF</div><div><div style="font-size:9.5px;font-weight:600;color:#1a1a1a">João Furtado</div><div style="font-size:8.5px;color:#888">Mestre em Economia · AI - Head Mesa Proprietária</div></div></div>';
+    pvc.appendChild(d);}
+  if(!pvc.children.length)pvc.innerHTML='<div style="padding:28px;text-align:center;color:#888;font-size:11px">Gere os temas no passo anterior.</div>';
+}
+function baixar(){
+  var arr=selArr(),ok=[];for(var i=0;i<arr.length;i++){var g=GEN[arr[i].id];if(g&&!g.loading)ok.push(arr[i]);}
+  if(!ok.length){showToast("Gere ao menos um tema");return;}
+  var mes=document.getElementById("MES").value;
+  var inds=[{v:"+0,88%",l:"IPCA Mar/26",s:"Acum. 12M: 4,14%",dk:true},{v:"14,75%",l:"Selic",s:"Corte -0,25pp",dk:true},{v:"~198k",l:"Ibovespa",s:"+22% no ano",dk:true},{v:"R$4,99",l:"Dolar",s:"Min. abr/24",dk:false},{v:"US$102",l:"Brent",s:"Time spread: 35,4",dk:false},{v:"12,25%",l:"Focus Selic/26",s:"Projecao dez/26",dk:false}];
+  var iH="";for(var i=0;i<inds.length;i++){var nd=inds[i];iH+='<div style="background:'+(nd.dk?"#37171b":"#f5f1ee")+';border:'+(nd.dk?"none":".3pt solid #ddd")+';border-radius:5px;padding:8px 10px"><div style="font-size:15pt;font-weight:700;color:'+(nd.dk?"#fff":"#37171b")+'">'+nd.v+'</div><div style="font-size:7.5pt;margin-top:2px;color:'+(nd.dk?"rgba(255,255,255,.5)":"#888")+'">'+nd.l+'</div><div style="font-size:7pt;color:'+(nd.dk?"rgba(255,255,255,.3)":"#aaa")+'">'+nd.s+"</div></div>";}
+  var ft='<div style="margin-top:auto;padding-top:4mm;border-top:.3pt solid #d4cdc9;display:flex;align-items:center;justify-content:space-between;font-size:7pt;color:#aaa"><div style="display:flex;align-items:center;gap:6px"><div style="width:20px;height:20px;border-radius:50%;background:#37171b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:7pt;font-weight:700">JF</div><div><div style="font-weight:600;color:#555;font-size:7.5pt">João Furtado</div><div style="color:#aaa;font-size:7pt">Mestre em Economia · AI - Head Mesa Proprietária</div></div></div><div>Miura Investimentos · btg pactual</div></div>';
+  var ph='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6mm;padding-bottom:3mm;border-bottom:.3pt solid #d4cdc9"><div style="font-size:8pt;font-weight:700;color:#37171b">MIURA INVESTIMENTOS <span style="color:#999;font-weight:400">· btg pactual</span></div><div style="font-size:7.5pt;color:#999">Relatorio Macro · '+mes+'</div></div>';
+  var tP="";for(var i=0;i<ok.length;i++){var t=ok[i],g=GEN[t.id];tP+='<div style="background:#fff;width:210mm;min-height:297mm;padding:16mm 18mm 18mm;display:flex;flex-direction:column;page-break-after:always;break-after:page">'+ph+'<div style="display:flex;flex-direction:column;flex:1"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4mm"><div style="width:24px;height:24px;border-radius:50%;background:'+t.color+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:9pt;font-weight:700">0'+(i+1)+'</div><div style="font-size:7.5pt;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;border:1px solid '+t.color+'88;color:'+t.color+'">'+t.cat+'</div></div><div style="font-size:7.5pt;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:'+t.color+';margin-bottom:1.5mm">TEMA 0'+(i+1)+' · '+t.cat.toUpperCase()+'</div><div style="height:1px;background:'+t.color+';width:55%;margin-bottom:4mm"></div><h2 style="font-size:21pt;font-weight:700;color:#1a1a1a;line-height:1.15;margin-bottom:5mm">'+(g.headline||t.name)+'</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1"><div style="padding:10px 13px;border-radius:5px;background:#f5f1ee;border:.3pt solid #ddd"><div style="font-size:7pt;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:'+t.color+';margin-bottom:2mm">— O QUE ACONTECEU</div><div style="height:.75px;background:'+t.color+';margin-bottom:3mm"></div><p style="font-size:9.5pt;line-height:1.7;color:#1a1a1a">'+(g.passado||"")+'</p></div><div style="padding:10px 13px;border-radius:5px;background:'+t.color+'"><div style="font-size:7pt;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:2mm">— O QUE ESPERAR</div><div style="height:.75px;background:rgba(255,255,255,.3);margin-bottom:3mm"></div><p style="font-size:9.5pt;line-height:1.7;color:rgba(255,255,255,.9)">'+(g.perspectiva||"")+"</p></div></div></div>"+ft+"</div>";}
+  var h1=ok[0]&&GEN[ok[0].id]&&GEN[ok[0].id].headline?GEN[ok[0].id].headline:"Analise Macro · "+mes;
+  var abB=MG?MG.split(/\n+/).filter(function(p){return p.length>0;}).map(function(p){return '<p style="margin-bottom:4mm">'+p+"</p>";}).join(""):"<p>Abertura nao gerada.</p>";
+  var tAb="";for(var i=0;i<ok.length;i++){tAb+='<div style="padding:6px 9px;border-radius:5px;background:#f5f1ee;border-left:3px solid '+ok[i].color+'"><div style="font-size:9.5pt;font-weight:600;color:'+ok[i].color+'">'+ok[i].name+'</div><div style="font-size:7pt;color:#888;margin-top:1px">'+ok[i].cat+"</div></div>";}
+  var capS=MG?MG.slice(0,280)+"...":"Uma analise aprofundada do cenario macroeconomico elaborada pela Mesa Proprietaria.";
+  var pills="";for(var i=0;i<ok.length;i++){pills+='<span style="font-size:7pt;color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.15);padding:3px 10px;border-radius:100px">'+ok[i].name+"</span>";}
+  var posArr=[["Renda Fixa Pos-fixada","#37171b","Selic em 14,75%aa remunera bem. Posicao core antes dos cortes."],["Tesouro IPCA+ / NTN-B","#54272d","Taxas reais elevadas: assimetria atraente para medio prazo."],["Bolsa (Ibovespa)","#1a5c35","Fluxo estrangeiro R$49,6bi e valuation atrativo. Exposicao disciplinada."],["Cambio / Dolar","#2a4a4a","Real valorizado +9% no ano. Exposicao residual como protecao de cauda."]];
+  var posH="";for(var i=0;i<posArr.length;i++){posH+='<div style="display:flex;gap:8px;margin-bottom:4mm"><div style="width:8px;height:8px;border-radius:50%;background:'+posArr[i][1]+';flex-shrink:0;margin-top:3px"></div><div><div style="font-size:9pt;font-weight:600;color:'+posArr[i][1]+';margin-bottom:1px">'+posArr[i][0]+'</div><div style="font-size:8.5pt;color:#666;line-height:1.6">'+posArr[i][2]+"</div></div></div>";}
+  var html='<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Carta Mensal Miura · '+mes+'</title><link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:\'Poppins\',sans-serif;background:#e8e4e0;padding:20px}@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{background:#fff;padding:0}.np{display:none!important}}.pg{margin:0 auto 24px;max-width:210mm}@media screen{.pg{box-shadow:0 4px 24px rgba(0,0,0,.15)}}</style></head><body><div class="np" style="position:fixed;bottom:0;left:0;right:0;background:#37171b;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;z-index:100"><div style="font-size:12pt;font-weight:600;color:#fff">Carta Mensal · '+mes+'</div><button onclick="window.print()" style="background:#598d71;color:#fff;border:none;font-family:inherit;font-size:11pt;font-weight:600;padding:10px 24px;border-radius:7px;cursor:pointer">Imprimir / PDF</button></div><div class="pg" style="background:#37171b;width:210mm;min-height:297mm;padding:16mm 18mm 18mm;display:flex;flex-direction:column;page-break-after:always;break-after:page"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:auto"><div style="font-size:11pt;font-weight:700;color:#fff">MIURA INVESTIMENTOS <span style="color:rgba(255,255,255,.4);font-weight:400;font-size:9pt">· btg pactual</span></div><div style="font-size:7pt;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.2);padding:3px 10px;border-radius:100px">Carta Mensal · '+mes+'</div></div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:12mm 0"><div style="font-size:36pt;font-weight:700;line-height:1.05;color:#fff;margin-bottom:4mm">'+h1+'</div><div style="width:40mm;height:2px;background:#598d71;margin-bottom:7mm"></div><div style="font-size:10.5pt;font-weight:300;color:rgba(255,255,255,.6);line-height:1.65;max-width:120mm">'+capS+'</div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8mm">'+pills+'</div></div><div style="border-top:1px solid rgba(255,255,255,.12);padding-top:5mm;display:flex;align-items:flex-end;justify-content:space-between"><div style="font-size:8pt;color:rgba(255,255,255,.5)"><strong style="color:rgba(255,255,255,.8);font-weight:600;display:block;margin-bottom:1px">João Furtado</strong>Mestre em Economia · AI - Head Mesa Proprietária</div><div style="font-size:6.5pt;color:rgba(255,255,255,.25);max-width:90mm;text-align:right;line-height:1.5">Material informativo. Nao constitui oferta ou recomendacao.</div></div></div><div class="pg" style="background:#fff;width:210mm;min-height:297mm;padding:16mm 18mm 18mm;display:flex;flex-direction:column;page-break-after:always;break-after:page">'+ph+'<h1 style="font-size:24pt;font-weight:700;color:#37171b;line-height:1.15;margin-bottom:5mm">'+h1+'</h1><div style="width:30mm;height:2px;background:#598d71;margin-bottom:7mm"></div><div style="font-size:11pt;line-height:1.85;color:#333;font-weight:300">'+abB+'</div><div style="margin-top:8mm;padding-top:6mm;border-top:.3pt solid #ddd"><div style="font-size:7.5pt;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#999;margin-bottom:4mm">Temas analisados</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">'+tAb+'</div></div><div style="margin-top:7mm;padding-top:6mm;border-top:.3pt solid #ddd"><div style="font-size:7.5pt;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#999;margin-bottom:4mm">Indicadores de referencia</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">'+iH+'</div></div>'+ft+'</div>'+tP+'<div class="pg" style="background:#fff;width:210mm;min-height:297mm;padding:16mm 18mm 18mm;display:flex;flex-direction:column">'+ph+'<h1 style="font-size:20pt;font-weight:700;color:#37171b;margin-bottom:2mm">Resumo do mes</h1><div style="height:1.5px;background:#598d71;width:30mm;margin-bottom:6mm"></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:8mm">'+iH+'</div>'+posH+ft+'</div><div style="height:80px" class="np"></div></body></html>';
+  var blob=new Blob([html],{type:"text/html;charset=utf-8"});var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");a.href=url;a.download="CartaMensal_Miura_"+mes.replace(" ","-")+".html";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  showToast("Carta baixada! Abra no Chrome e Ctrl+P para PDF.",true);
+}
+function showToast(msg,ok){var el=document.getElementById("TOAST");el.textContent=msg;el.style.background=ok?"#598d71":"#37171b";el.classList.add("show");setTimeout(function(){el.classList.remove("show");},2800);}
+init();
+</script>
+</body>
+</html>
